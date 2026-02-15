@@ -1,0 +1,56 @@
+// Переменные
+$primary-color: #e67e22;
+$secondary-color: #2c3e50;
+$border-radius: 8px;
+
+// Миксин для карточки
+@mixin card-shadow($color) {
+    box-shadow: 0 4px 8px rgba($color, 0.2);
+    transition: box-shadow 0.3s ease;
+    
+    &:hover {
+        box-shadow: 0 8px 16px rgba($color, 0.3);
+    }
+}
+
+// Стили карточки с вложенностью
+.card {
+    max-width: 300px;
+    border: 1px solid #ddd;
+    border-radius: $border-radius;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    @include card-shadow($secondary-color);   // используем миксин
+    
+    &__image {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    
+    &__title {
+        font-size: 1.5rem;
+        margin: 16px 16px 8px;
+        color: $secondary-color;
+    }
+    
+    &__description {
+        font-size: 1rem;
+        margin: 0 16px 16px;
+        color: lighten($secondary-color, 20%);
+    }
+    
+    &__button {
+        display: inline-block;
+        margin: 0 16px 16px;
+        padding: 10px 20px;
+        background-color: $primary-color;
+        color: white;
+        text-decoration: none;
+        border-radius: $border-radius;
+        
+        &:hover {
+            background-color: darken($primary-color, 10%);
+        }
+    }
+}
