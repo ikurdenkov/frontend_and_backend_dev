@@ -5,14 +5,12 @@ const port = 3000;
 // Middleware для парсинга JSON
 app.use(express.json());
 
-// Начальные данные (имитация базы данных)
+// Начальные данные
 let products = [
   { id: 1, name: 'Ноутбук', price: 75000 },
   { id: 2, name: 'Мышь', price: 1500 },
   { id: 3, name: 'Клавиатура', price: 3000 }
 ];
-
-// ---- Маршруты ----
 
 // Получить все товары
 app.get('/products', (req, res) => {
@@ -33,19 +31,19 @@ app.get('/products/:id', (req, res) => {
 app.post('/products', (req, res) => {
   const { name, price } = req.body;
 
-  // Простейшая валидация
+  // Валидация
   if (!name || price === undefined) {
     return res.status(400).json({ message: 'Необходимо указать name и price' });
   }
 
-  // Генерируем новый id (например, на основе текущего времени)
+  // Генерируем новый id
   const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
   const newProduct = { id: newId, name, price };
   products.push(newProduct);
   res.status(201).json(newProduct);
 });
 
-// Обновить товар (частично)
+// Обновить товар
 app.patch('/products/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const product = products.find(p => p.id === id);
@@ -69,10 +67,9 @@ app.delete('/products/:id', (req, res) => {
   }
 
   products.splice(productIndex, 1);
-  res.status(204).send(); // 204 No Content — успешно, но без тела ответа
+  res.status(204).send();
 });
 
-// Запуск сервера
 app.listen(port, () => {
   console.log(`Сервер запущен на http://localhost:${port}`);
 });
