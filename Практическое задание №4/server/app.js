@@ -1,12 +1,84 @@
 const express = require('express');
 const { nanoid } = require('nanoid');
 const cors = require('cors');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 const port = 3000;
+// Swagger definition
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Electronics Shop API',
+      version: '1.0.0',
+      description: 'API для управления товарами интернет-магазина электроники',
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000',
+        description: 'Локальный сервер',
+      },
+    ],
+  },
+  // Путь к файлам, содержащим JSDoc-аннотации (текущий файл)
+  apis: ['./app.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+// Подключаем Swagger UI по адресу /api-docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:3001' }));
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       required:
+ *         - name
+ *         - price
+ *         - stock
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: Уникальный идентификатор товара (генерируется автоматически)
+ *         name:
+ *           type: string
+ *           description: Название товара
+ *         category:
+ *           type: string
+ *           description: Категория товара
+ *         description:
+ *           type: string
+ *           description: Подробное описание товара
+ *         price:
+ *           type: number
+ *           description: Цена товара в рублях
+ *         stock:
+ *           type: integer
+ *           description: Количество товара на складе
+ *         rating:
+ *           type: number
+ *           description: Рейтинг товара (от 1 до 5)
+ *         image:
+ *           type: string
+ *           description: URL изображения товара
+ *       example:
+ *         id: "abc123"
+ *         name: "Ноутбук ASUS ROG"
+ *         category: "Ноутбуки"
+ *         description: "Игровой ноутбук с RTX 3060"
+ *         price: 120000
+ *         stock: 5
+ *         rating: 4.5
+ *         image: "https://via.placeholder.com/150?text=ASUS"
+ */
 
 let products = [
   { id: nanoid(6), name: 'Ноутбук ASUS ROG', category: 'Ноутбуки', description: 'Игровой ноутбук с RTX 3060', price: 120000, stock: 5, rating: 4.5, image: 'https://via.placeholder.com/150?text=ASUS' },
@@ -32,10 +104,49 @@ function findProductOr404(id, res) {
   return product;
 }
 
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     summary: Возвращает список всех товаров
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: Успешный ответ – массив товаров
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ */
 app.get('/api/products', (req, res) => {
   res.json(products);
 });
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   get:
+ *     summary: Получает товар по его ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID товара
+ *     responses:
+ *       200:
+ *         description: Данные товара
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Товар не найден
+ */
 app.get('/api/products/:id', (req, res) => {
   const id = req.params.id;
   const product = findProductOr404(id, res);
@@ -43,6 +154,55 @@ app.get('/api/products/:id', (req, res) => {
   res.json(product);
 });
 
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Создаёт новый товар
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - price
+ *               - stock
+ *             properties:
+ *               name:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               stock:
+ *                 type: integer
+ *               rating:
+ *                 type: number
+ *               image:
+ *                 type: string
+ *             example:
+ *               name: "Новый товар"
+ *               category: "Аксессуары"
+ *               description: "Описание нового товара"
+ *               price: 9999
+ *               stock: 10
+ *               rating: 4.2
+ *               image: "https://example.com/image.jpg"
+ *     responses:
+ *       201:
+ *         description: Товар успешно создан
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Не заполнены обязательные поля
+ */
 app.post('/api/products', (req, res) => {
   const { name, category, description, price, stock, rating, image } = req.body;
 
@@ -65,6 +225,50 @@ app.post('/api/products', (req, res) => {
   res.status(201).json(newProduct);
 });
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   patch:
+ *     summary: Частично обновляет данные товара
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID товара
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               stock:
+ *                 type: integer
+ *               rating:
+ *                 type: number
+ *               image:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Обновлённый товар
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Товар не найден
+ */
 app.patch('/api/products/:id', (req, res) => {
   const id = req.params.id;
   const product = findProductOr404(id, res);
@@ -83,6 +287,25 @@ app.patch('/api/products/:id', (req, res) => {
   res.json(product);
 });
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Удаляет товар по ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID товара
+ *     responses:
+ *       204:
+ *         description: Товар удалён (нет содержимого)
+ *       404:
+ *         description: Товар не найден
+ */
 app.delete('/api/products/:id', (req, res) => {
   const id = req.params.id;
   const exists = products.some(p => p.id === id);
