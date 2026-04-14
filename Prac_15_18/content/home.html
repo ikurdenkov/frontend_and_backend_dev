@@ -1,0 +1,17 @@
+<div class="home-content">
+    <h2 class="is-center">📌 Быстрая заметка</h2>
+    <form id="note-form" style="display: flex; gap: 10px; margin-bottom: 2rem;">
+        <input type="text" id="note-input" placeholder="Текст заметки..." required style="flex:1; padding: 12px; border-radius: 60px; border: 1px solid #ccc;">
+        <button type="submit" class="button primary" style="background:#4285f4; color:white; border:none; padding:0 20px; border-radius:60px;">Добавить</button>
+    </form>
+
+    <h2 class="is-center">⏰ Заметка с напоминанием</h2>
+    <form id="reminder-form" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 2rem;">
+        <input type="text" id="reminder-text" placeholder="Текст напоминания" required style="flex:2; padding: 12px; border-radius: 60px; border: 1px solid #ccc;">
+        <input type="datetime-local" id="reminder-time" required style="flex:1; padding: 12px; border-radius: 60px; border: 1px solid #ccc;">
+        <button type="submit" class="button success" style="background:#28a745; color:white; border:none; padding:0 20px; border-radius:60px;">Добавить</button>
+    </form>
+
+    <h2 class="is-center">📋 Список заметок</h2>
+    <ul id="notes-list" style="list-style: none; padding-left: 0;"></ul>
+</div>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Заметки PWA</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4285f4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/icons/favicon-152x152.png">
+    <link rel="icon" href="/icons/favicon.ico" sizes="16x16" type="image/ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f4f6fa; padding: 2rem 1rem; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .container { max-width: 800px; width: 100%; background: white; border-radius: 28px; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #4285f4, #34a0f5); padding: 1.5rem; color: white; }
+        .header h1 { font-size: 1.8rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header p { opacity: 0.9; margin-top: 0.5rem; font-size: 0.9rem; }
+        .network-status { display: inline-block; margin-top: 12px; padding: 4px 12px; border-radius: 40px; font-size: 0.75rem; font-weight: 500; background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); width: fit-content; }
+        .network-status.offline { background: rgba(0,0,0,0.3); color: #ffd6d6; }
+        .tabs { display: flex; gap: 1rem; justify-content: center; margin: 1rem 0; }
+        .tab { background: #eef2f6; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .tab.active { background: #4285f4; color: white; }
+        #app-content { padding: 0 1.5rem 1.5rem 1.5rem; }
+        footer { padding: 1rem; text-align: center; border-top: 1px solid #eef2f6; display: flex; gap: 1rem; justify-content: center; }
+        button.button { padding: 8px 16px; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; }
+        .success { background: #28a745; color: white; }
+        .error { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📝 Заметки PWA</h1>
+        <p>Офлайн, уведомления, напоминания</p>
+        <div id="network-status" class="network-status">🟢 Онлайн</div>
+    </div>
+    <div class="tabs">
+        <button id="home-btn" class="tab active">Главная</button>
+        <button id="about-btn" class="tab">О приложении</button>
+    </div>
+    <main id="app-content">
+        <!-- Динамический контент загружается сюда -->
+    </main>
+    <footer>
+        <button id="enable-push" class="button success">🔔 Включить уведомления</button>
+        <button id="disable-push" class="button error" style="display:none;">🔕 Отключить уведомления</button>
+    </footer>
+</div>
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
